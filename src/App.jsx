@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Container, TextField, Typography, Box } from '@mui/material';
 import { LoadingButton } from '@mui/lab';
-
 import axios from 'axios';
 
 const API_WEATHER = `https://api.weatherapi.com/v1/current.json?key=${import.meta.env.VITE_API_KEY}&q=`;

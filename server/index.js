@@ -1,48 +1,36 @@
 import express from 'express';
-import mongoose from 'mongoose';
 import cors from 'cors';
-import dotenv from 'dotenv';
-
-dotenv.config();
+import mongoose from 'mongoose';
 
 const app = express();
-const port = process.env.PORT || 5173;
+const port = 5000;
 
 app.use(cors());
 app.use(express.json());
 
-mongoose.connect(process.env.MONGODB_URI, {
+mongoose.connect('mongodb://127.0.0.1:27017/historial', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
-const connection = mongoose.connection;
-connection.once('open', () => {
-  console.log('MongoDB database connection established successfully');
-});
-
-// Schema and model
-const weatherSchema = new mongoose.Schema({
+const historialSchema = new mongoose.Schema({
   city: String,
   country: String,
   temp: Number,
-  condition: String,
+  condition: Number,
   icon: String,
   conditionText: String,
-  date: { type: Date, default: Date.now },
 });
 
-const Weather = mongoose.model('Weather', weatherSchema);
+const Historial = mongoose.model('Historial', historialSchema);
 
-// Routes
 app.post('/api/weather', async (req, res) => {
-  const weatherData = new Weather(req.body);
-  try {
-    await weatherData.save();
-    res.status(201).send(weatherData);
-  } catch (error) {
-    res.status(400).send(error);
-  }
+  const { city, country, temp, condition, icon, conditionText } = req.body;
+  
+  const newRecord = new Historial({ city, country, temp, condition, icon, conditionText });
+  await newRecord.save();
+  
+  res.status(201).json(newRecord);
 });
 
 app.listen(port, () => {
